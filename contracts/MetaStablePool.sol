@@ -20,6 +20,7 @@ import "./OracleMiscData.sol";
 import "./StableOracleMath.sol";
 import "./LogCompression.sol";
 import "./PoolPriceOracle.sol";
+import "./StablePool/BalancerPoolToken.sol";
 
 /**
  * @dev StablePool suitable for assets with proportional prices (i.e. with slow-changing exchange rates between them).
@@ -27,14 +28,16 @@ import "./PoolPriceOracle.sol";
  *
  * It additionally features a price oracle.
  */
-contract MetaStablePool is StableOracleMath, PoolPriceOracle {
+contract MetaStablePool is BalancerPoolToken, StableOracleMath, PoolPriceOracle {
     using WordCodec for bytes32;
     using OracleMiscData for bytes32;
 
     bytes32 private _miscData;
     uint256 private _amplificationParameter;
 
-    constructor(uint256 amplificationParameter) {
+    constructor(uint256 amplificationParameter)
+        BalancerPoolToken('tokenName', 'tokenSymbol')
+    {
         _amplificationParameter = amplificationParameter;
     }
 

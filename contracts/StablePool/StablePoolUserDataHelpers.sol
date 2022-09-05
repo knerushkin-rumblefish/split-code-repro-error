@@ -14,9 +14,9 @@
 
 pragma solidity ^0.7.0;
 
-import "./IERC20.sol";
+import "../ERC20/IERC20.sol";
 
-import "./StablePool";
+import "./StablePool.sol";
 
 library StablePoolUserDataHelpers {
     function joinKind(bytes memory self) internal pure returns (StablePool.JoinKind) {

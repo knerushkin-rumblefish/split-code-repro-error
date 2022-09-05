@@ -22,9 +22,10 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface MetaStablePoolFactoryInterface extends ethers.utils.Interface {
   functions: {
     "_getCreationCodeWithArgs(bytes)": FunctionFragment;
-    "create(string,string,address[],address[],uint256,uint256,uint256,uint256,address)": FunctionFragment;
+    "create(string,string,address[],uint256,address[],uint256[],uint256,address)": FunctionFragment;
     "getCreationCode()": FunctionFragment;
     "getCreationCodeContracts()": FunctionFragment;
+    "getPauseConfiguration()": FunctionFragment;
     "getVault()": FunctionFragment;
     "isPoolFromFactory(address)": FunctionFragment;
   };
@@ -39,10 +40,9 @@ interface MetaStablePoolFactoryInterface extends ethers.utils.Interface {
       string,
       string,
       string[],
+      BigNumberish,
       string[],
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
+      BigNumberish[],
       BigNumberish,
       string
     ]
@@ -53,6 +53,10 @@ interface MetaStablePoolFactoryInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getCreationCodeContracts",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPauseConfiguration",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
@@ -72,6 +76,10 @@ interface MetaStablePoolFactoryInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getCreationCodeContracts",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPauseConfiguration",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
@@ -142,11 +150,10 @@ export class MetaStablePoolFactory extends BaseContract {
       name: string,
       symbol: string,
       tokens: string[],
-      rateProviders: string[],
       amplificationParameter: BigNumberish,
+      rateProviders: string[],
+      priceRateCacheDuration: BigNumberish[],
       swapFeePercentage: BigNumberish,
-      pauseWindowDuration: BigNumberish,
-      bufferPeriodDuration: BigNumberish,
       owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -156,6 +163,15 @@ export class MetaStablePoolFactory extends BaseContract {
     getCreationCodeContracts(
       overrides?: CallOverrides
     ): Promise<[string, string] & { contractA: string; contractB: string }>;
+
+    getPauseConfiguration(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        pauseWindowDuration: BigNumber;
+        bufferPeriodDuration: BigNumber;
+      }
+    >;
 
     getVault(overrides?: CallOverrides): Promise<[string]>;
 
@@ -174,11 +190,10 @@ export class MetaStablePoolFactory extends BaseContract {
     name: string,
     symbol: string,
     tokens: string[],
-    rateProviders: string[],
     amplificationParameter: BigNumberish,
+    rateProviders: string[],
+    priceRateCacheDuration: BigNumberish[],
     swapFeePercentage: BigNumberish,
-    pauseWindowDuration: BigNumberish,
-    bufferPeriodDuration: BigNumberish,
     owner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -188,6 +203,15 @@ export class MetaStablePoolFactory extends BaseContract {
   getCreationCodeContracts(
     overrides?: CallOverrides
   ): Promise<[string, string] & { contractA: string; contractB: string }>;
+
+  getPauseConfiguration(
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & {
+      pauseWindowDuration: BigNumber;
+      bufferPeriodDuration: BigNumber;
+    }
+  >;
 
   getVault(overrides?: CallOverrides): Promise<string>;
 
@@ -203,11 +227,10 @@ export class MetaStablePoolFactory extends BaseContract {
       name: string,
       symbol: string,
       tokens: string[],
-      rateProviders: string[],
       amplificationParameter: BigNumberish,
+      rateProviders: string[],
+      priceRateCacheDuration: BigNumberish[],
       swapFeePercentage: BigNumberish,
-      pauseWindowDuration: BigNumberish,
-      bufferPeriodDuration: BigNumberish,
       owner: string,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -217,6 +240,15 @@ export class MetaStablePoolFactory extends BaseContract {
     getCreationCodeContracts(
       overrides?: CallOverrides
     ): Promise<[string, string] & { contractA: string; contractB: string }>;
+
+    getPauseConfiguration(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        pauseWindowDuration: BigNumber;
+        bufferPeriodDuration: BigNumber;
+      }
+    >;
 
     getVault(overrides?: CallOverrides): Promise<string>;
 
@@ -246,11 +278,10 @@ export class MetaStablePoolFactory extends BaseContract {
       name: string,
       symbol: string,
       tokens: string[],
-      rateProviders: string[],
       amplificationParameter: BigNumberish,
+      rateProviders: string[],
+      priceRateCacheDuration: BigNumberish[],
       swapFeePercentage: BigNumberish,
-      pauseWindowDuration: BigNumberish,
-      bufferPeriodDuration: BigNumberish,
       owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -258,6 +289,8 @@ export class MetaStablePoolFactory extends BaseContract {
     getCreationCode(overrides?: CallOverrides): Promise<BigNumber>;
 
     getCreationCodeContracts(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getPauseConfiguration(overrides?: CallOverrides): Promise<BigNumber>;
 
     getVault(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -277,11 +310,10 @@ export class MetaStablePoolFactory extends BaseContract {
       name: string,
       symbol: string,
       tokens: string[],
-      rateProviders: string[],
       amplificationParameter: BigNumberish,
+      rateProviders: string[],
+      priceRateCacheDuration: BigNumberish[],
       swapFeePercentage: BigNumberish,
-      pauseWindowDuration: BigNumberish,
-      bufferPeriodDuration: BigNumberish,
       owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -289,6 +321,10 @@ export class MetaStablePoolFactory extends BaseContract {
     getCreationCode(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getCreationCodeContracts(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPauseConfiguration(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

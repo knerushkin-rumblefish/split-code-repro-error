@@ -15,13 +15,14 @@
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
-
-import "../../BasePool/BasePoolSplitCodeFactory.sol";
-
-import "./MetaStablePool.sol";
 import "../../vault/IVault.sol";
 
-contract MetaStablePoolFactory is BasePoolSplitCodeFactory {
+import "../../BasePool/BasePoolSplitCodeFactory.sol";
+import "../../BasePool/FactoryWidePauseWindow.sol";
+
+import "./MetaStablePool.sol";
+
+contract MetaStablePoolFactory is BasePoolSplitCodeFactory, FactoryWidePauseWindow {
     constructor(IVault vault) BasePoolSplitCodeFactory(vault, type(MetaStablePool).creationCode) {
         // solhint-disable-previous-line no-empty-blocks
     }
@@ -33,42 +34,32 @@ contract MetaStablePoolFactory is BasePoolSplitCodeFactory {
         string memory name,
         string memory symbol,
         IERC20[] memory tokens,
-        IRateProvider[] memory rateProviders,
         uint256 amplificationParameter,
+        IRateProvider[] memory rateProviders,
+        uint256[] memory priceRateCacheDuration,
         uint256 swapFeePercentage,
-        uint256 pauseWindowDuration,
-        uint256 bufferPeriodDuration,
         address owner
     ) external returns (address) {
+        (uint256 pauseWindowDuration, uint256 bufferPeriodDuration) = getPauseConfiguration();
+
         return
-            _create(
-                abi.encode(
-//                    MetaStablePool.NewPoolParams({
-//                        vault: getVault(),
-//                        name: name,
-//                        symbol: symbol,
-//                        tokens: tokens,
-//                        rateProviders: rateProviders,
-//                        priceRateCacheDuration: priceRateCacheDuration,
-//                        amplificationParameter: amplificationParameter,
-//                        swapFeePercentage: swapFeePercentage,
-//                        pauseWindowDuration: pauseWindowDuration,
-//                        bufferPeriodDuration: bufferPeriodDuration,
-//                        oracleEnabled: oracleEnabled,
-//                        owner: owner
-//                    })
-                    getVault(),
-                    name,
-                    symbol,
-                    tokens,
-                    rateProviders,
-//                    priceRateCacheDuration,
-                    amplificationParameter,
-                    swapFeePercentage,
-                    pauseWindowDuration,
-                    bufferPeriodDuration,
-                    owner
-                )
-            );
+        _create(
+            abi.encode(
+                MetaStablePool.NewPoolParams({
+                    vault: getVault(),
+                    name: name,
+                    symbol: symbol,
+                    tokens: tokens,
+                    rateProviders: rateProviders,
+                    priceRateCacheDuration: priceRateCacheDuration,
+                    amplificationParameter: amplificationParameter,
+                    swapFeePercentage: swapFeePercentage,
+                    pauseWindowDuration: pauseWindowDuration,
+                    bufferPeriodDuration: bufferPeriodDuration,
+                    oracleEnabled: false,
+                    owner: owner
+                })
+            )
+        );
     }
 }

@@ -31,7 +31,6 @@ const deploy: DeployFunction = async function ({ deployments, getNamedAccounts }
 
     const metaStablePoolFactoryContract = await ethers.getContractAt('MetaStablePoolFactory', metaStablePoolFactoryResult.address) as MetaStablePoolFactory
 
-    const swapFeePercentage = BigNumber.from(0.008e18)
 
     let tokens = []
     for (let tokenName of TOKENS) {
@@ -39,17 +38,20 @@ const deploy: DeployFunction = async function ({ deployments, getNamedAccounts }
         tokens.push(TokenDeployment.address)
     }
     tokens = tokens.sort()
-    const rateProviders = [ ethers.constants.AddressZero, ethers.constants.AddressZero ]
+    const noRateProviders = tokens.map(() => ethers.constants.AddressZero)
+
+    const amplificationParameter = BigNumber.from(100)
+    const swapFeePercentage = BigNumber.from(0.008e18)
+    const noPriceRateCache = tokens.map(() => BigNumber.from(0))
 
     const transaction= await metaStablePoolFactoryContract.create(
         "Meta Pool",
         "meta-pool",
         tokens,
-        rateProviders,
-        BigNumber.from(100),
+        amplificationParameter,
+        noRateProviders,
+        noPriceRateCache,
         swapFeePercentage,
-        0,
-        0,
         deployer
     )
     const receipt = await transaction.wait()

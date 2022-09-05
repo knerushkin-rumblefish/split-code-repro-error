@@ -29,27 +29,27 @@ const deploy: DeployFunction = async function ({ deployments, getNamedAccounts }
     const VaultDeployment = await deployments.get("Vault")
 
     console.log('VaultDeployment', VaultDeployment.address)
-    await deploy('MetaStablePool', {
-        from: deployer,
-        gasLimit: 12000000,
-        gasPrice: ethers.BigNumber.from(90000 * (10 ** 9)),
-        args: [
-            VaultDeployment.address,
-            "Meta Pool",
-            "meta-pool",
-            tokens,
-            rateProviders,
-            amplificationParameter,
-            swapFeePercentage,
-            0,
-            0,
-            deployer
-        ],
-        log: true,
-        libraries: {
-            QueryProcessor: queryProcessor.address,
-        }
-    })
+    // await deploy('MetaStablePool', {
+    //     from: deployer,
+    //     gasLimit: 12000000,
+    //     gasPrice: ethers.BigNumber.from(90000 * (10 ** 9)),
+    //     args: [
+    //         VaultDeployment.address,
+    //         "Meta Pool",
+    //         "meta-pool",
+    //         tokens,
+    //         rateProviders,
+    //         amplificationParameter,
+    //         swapFeePercentage,
+    //         0,
+    //         0,
+    //         deployer
+    //     ],
+    //     log: true,
+    //     libraries: {
+    //         QueryProcessor: queryProcessor.address,
+    //     }
+    // })
 }
 
 deploy.tags = ['mainnet', 'testnet', 'local', 'hardhat']

@@ -3,7 +3,7 @@ import { run } from '../scripts/contract-error.run'
 
 
 const deploy: DeployFunction = async function ({ deployments, getNamedAccounts }) {
-    await run()
+    // await run()
 }
 
 deploy.tags = ['mainnet', 'testnet', 'local', 'hardhat']

@@ -37,29 +37,33 @@ contract MetaStablePool is StablePool, StableOracleMath, PoolPriceOracle {
 
     bytes32 private _miscData;
 
-    constructor(
-        IVault vault,
-        string memory name,
-        string memory symbol,
-        IERC20[] memory tokens,
-        IRateProvider[] memory rateProviders,
-        uint256 amplificationParameter,
-        uint256 swapFeePercentage,
-        uint256 pauseWindowDuration,
-        uint256 bufferPeriodDuration,
-        address owner
+    struct NewPoolParams {
+        IVault vault;
+        string name;
+        string symbol;
+        IERC20[] tokens;
+        IRateProvider[] rateProviders;
+        uint256[] priceRateCacheDuration;
+        uint256 amplificationParameter;
+        uint256 swapFeePercentage;
+        uint256 pauseWindowDuration;
+        uint256 bufferPeriodDuration;
+        bool oracleEnabled;
+        address owner;
+    }
+
+    constructor(NewPoolParams memory params)
+    StablePool(
+        params.vault,
+        params.name,
+        params.symbol,
+        params.tokens,
+        params.amplificationParameter,
+        params.swapFeePercentage,
+        params.pauseWindowDuration,
+        params.bufferPeriodDuration,
+        params.owner
     )
-        StablePool(
-            vault,
-            name,
-            symbol,
-            tokens,
-            amplificationParameter,
-            swapFeePercentage,
-            pauseWindowDuration,
-            bufferPeriodDuration,
-            owner
-        )
     {}
 
 

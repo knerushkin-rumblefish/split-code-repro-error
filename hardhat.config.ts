@@ -8,12 +8,19 @@ const MAINNET_PRIVKEY = process.env.MAINNET_PRIVKEY as string
 
 import { HardhatUserConfig } from 'hardhat/types'
 
+import 'hardhat-contract-sizer'
 import 'hardhat-deploy'
 import '@typechain/hardhat'
 import '@nomiclabs/hardhat-ethers'
 
 
 const harhatConfig: HardhatUserConfig = {
+  contractSizer: {
+    runOnCompile: true,
+    alphaSort: true,
+    disambiguatePaths: false,
+    // strict: true,
+  },
   solidity: {
     compilers: [
       {

@@ -32,13 +32,20 @@ interface BasePoolInterface extends ethers.utils.Interface {
     "getOwner()": FunctionFragment;
     "getPausedState()": FunctionFragment;
     "getPoolId()": FunctionFragment;
+    "getScalingFactors()": FunctionFragment;
     "getSwapFeePercentage()": FunctionFragment;
     "getVault()": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "nonces(address)": FunctionFragment;
+    "onExitPool(bytes32,address,address,uint256[],uint256,uint256,bytes)": FunctionFragment;
+    "onJoinPool(bytes32,address,address,uint256[],uint256,uint256,bytes)": FunctionFragment;
     "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
+    "queryExit(bytes32,address,address,uint256[],uint256,uint256,bytes)": FunctionFragment;
+    "queryJoin(bytes32,address,address,uint256[],uint256,uint256,bytes)": FunctionFragment;
+    "setAssetManagerPoolConfig(address,bytes)": FunctionFragment;
+    "setPaused(bool)": FunctionFragment;
     "setSwapFeePercentage(uint256)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
@@ -79,6 +86,10 @@ interface BasePoolInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "getPoolId", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "getScalingFactors",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getSwapFeePercentage",
     values?: undefined
   ): string;
@@ -94,6 +105,30 @@ interface BasePoolInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "nonces", values: [string]): string;
   encodeFunctionData(
+    functionFragment: "onExitPool",
+    values: [
+      BytesLike,
+      string,
+      string,
+      BigNumberish[],
+      BigNumberish,
+      BigNumberish,
+      BytesLike
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "onJoinPool",
+    values: [
+      BytesLike,
+      string,
+      string,
+      BigNumberish[],
+      BigNumberish,
+      BigNumberish,
+      BytesLike
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "permit",
     values: [
       string,
@@ -105,6 +140,35 @@ interface BasePoolInterface extends ethers.utils.Interface {
       BytesLike
     ]
   ): string;
+  encodeFunctionData(
+    functionFragment: "queryExit",
+    values: [
+      BytesLike,
+      string,
+      string,
+      BigNumberish[],
+      BigNumberish,
+      BigNumberish,
+      BytesLike
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "queryJoin",
+    values: [
+      BytesLike,
+      string,
+      string,
+      BigNumberish[],
+      BigNumberish,
+      BigNumberish,
+      BytesLike
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setAssetManagerPoolConfig",
+    values: [string, BytesLike]
+  ): string;
+  encodeFunctionData(functionFragment: "setPaused", values: [boolean]): string;
   encodeFunctionData(
     functionFragment: "setSwapFeePercentage",
     values: [BigNumberish]
@@ -150,6 +214,10 @@ interface BasePoolInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "getPoolId", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "getScalingFactors",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getSwapFeePercentage",
     data: BytesLike
   ): Result;
@@ -161,7 +229,16 @@ interface BasePoolInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "onExitPool", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "onJoinPool", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "permit", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "queryExit", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "queryJoin", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setAssetManagerPoolConfig",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setPaused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setSwapFeePercentage",
     data: BytesLike
@@ -299,6 +376,8 @@ export class BasePool extends BaseContract {
 
     getPoolId(overrides?: CallOverrides): Promise<[string]>;
 
+    getScalingFactors(overrides?: CallOverrides): Promise<[BigNumber[]]>;
+
     getSwapFeePercentage(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getVault(overrides?: CallOverrides): Promise<[string]>;
@@ -319,6 +398,28 @@ export class BasePool extends BaseContract {
 
     nonces(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    onExitPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    onJoinPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     permit(
       owner: string,
       spender: string,
@@ -327,6 +428,39 @@ export class BasePool extends BaseContract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    queryExit(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    queryJoin(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setAssetManagerPoolConfig(
+      token: string,
+      poolConfig: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setPaused(
+      paused: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -395,6 +529,8 @@ export class BasePool extends BaseContract {
 
   getPoolId(overrides?: CallOverrides): Promise<string>;
 
+  getScalingFactors(overrides?: CallOverrides): Promise<BigNumber[]>;
+
   getSwapFeePercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
   getVault(overrides?: CallOverrides): Promise<string>;
@@ -415,6 +551,28 @@ export class BasePool extends BaseContract {
 
   nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+  onExitPool(
+    poolId: BytesLike,
+    sender: string,
+    recipient: string,
+    balances: BigNumberish[],
+    lastChangeBlock: BigNumberish,
+    protocolSwapFeePercentage: BigNumberish,
+    userData: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  onJoinPool(
+    poolId: BytesLike,
+    sender: string,
+    recipient: string,
+    balances: BigNumberish[],
+    lastChangeBlock: BigNumberish,
+    protocolSwapFeePercentage: BigNumberish,
+    userData: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   permit(
     owner: string,
     spender: string,
@@ -423,6 +581,39 @@ export class BasePool extends BaseContract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  queryExit(
+    poolId: BytesLike,
+    sender: string,
+    recipient: string,
+    balances: BigNumberish[],
+    lastChangeBlock: BigNumberish,
+    protocolSwapFeePercentage: BigNumberish,
+    userData: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  queryJoin(
+    poolId: BytesLike,
+    sender: string,
+    recipient: string,
+    balances: BigNumberish[],
+    lastChangeBlock: BigNumberish,
+    protocolSwapFeePercentage: BigNumberish,
+    userData: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setAssetManagerPoolConfig(
+    token: string,
+    poolConfig: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setPaused(
+    paused: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -494,6 +685,8 @@ export class BasePool extends BaseContract {
 
     getPoolId(overrides?: CallOverrides): Promise<string>;
 
+    getScalingFactors(overrides?: CallOverrides): Promise<BigNumber[]>;
+
     getSwapFeePercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
     getVault(overrides?: CallOverrides): Promise<string>;
@@ -514,6 +707,28 @@ export class BasePool extends BaseContract {
 
     nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    onExitPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[], BigNumber[]]>;
+
+    onJoinPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[], BigNumber[]]>;
+
     permit(
       owner: string,
       spender: string,
@@ -524,6 +739,40 @@ export class BasePool extends BaseContract {
       s: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    queryExit(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber[]] & { bptIn: BigNumber; amountsOut: BigNumber[] }
+    >;
+
+    queryJoin(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber[]] & { bptOut: BigNumber; amountsIn: BigNumber[] }
+    >;
+
+    setAssetManagerPoolConfig(
+      token: string,
+      poolConfig: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setPaused(paused: boolean, overrides?: CallOverrides): Promise<void>;
 
     setSwapFeePercentage(
       swapFeePercentage: BigNumberish,
@@ -640,6 +889,8 @@ export class BasePool extends BaseContract {
 
     getPoolId(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getScalingFactors(overrides?: CallOverrides): Promise<BigNumber>;
+
     getSwapFeePercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
     getVault(overrides?: CallOverrides): Promise<BigNumber>;
@@ -660,6 +911,28 @@ export class BasePool extends BaseContract {
 
     nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    onExitPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    onJoinPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     permit(
       owner: string,
       spender: string,
@@ -668,6 +941,39 @@ export class BasePool extends BaseContract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    queryExit(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    queryJoin(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setAssetManagerPoolConfig(
+      token: string,
+      poolConfig: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setPaused(
+      paused: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -735,6 +1041,8 @@ export class BasePool extends BaseContract {
 
     getPoolId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getScalingFactors(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getSwapFeePercentage(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -760,6 +1068,28 @@ export class BasePool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    onExitPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    onJoinPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     permit(
       owner: string,
       spender: string,
@@ -768,6 +1098,39 @@ export class BasePool extends BaseContract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    queryExit(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    queryJoin(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setAssetManagerPoolConfig(
+      token: string,
+      poolConfig: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setPaused(
+      paused: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

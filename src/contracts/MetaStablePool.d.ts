@@ -28,19 +28,23 @@ interface MetaStablePoolInterface extends ethers.utils.Interface {
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
     "dirtyUninitializedOracleSamples(uint256,uint256)": FunctionFragment;
-    "errorMethod(uint256,uint256)": FunctionFragment;
+    "enableOracle()": FunctionFragment;
     "getActionId(bytes4)": FunctionFragment;
+    "getAmplificationParameter()": FunctionFragment;
     "getAuthorizer()": FunctionFragment;
     "getLargestSafeQueryWindow()": FunctionFragment;
+    "getLastInvariant()": FunctionFragment;
     "getLatest(uint8)": FunctionFragment;
-    "getMiscDataTotalSupply()": FunctionFragment;
     "getOracleMiscData()": FunctionFragment;
     "getOwner()": FunctionFragment;
     "getPastAccumulators((uint8,uint256)[])": FunctionFragment;
     "getPausedState()": FunctionFragment;
     "getPoolId()": FunctionFragment;
+    "getPriceRateCache(address)": FunctionFragment;
     "getRate()": FunctionFragment;
+    "getRateProviders()": FunctionFragment;
     "getSample(uint256)": FunctionFragment;
+    "getScalingFactors()": FunctionFragment;
     "getSwapFeePercentage()": FunctionFragment;
     "getTimeWeightedAverage((uint8,uint256,uint256)[])": FunctionFragment;
     "getTotalSamples()": FunctionFragment;
@@ -49,8 +53,15 @@ interface MetaStablePoolInterface extends ethers.utils.Interface {
     "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "nonces(address)": FunctionFragment;
+    "onExitPool(bytes32,address,address,uint256[],uint256,uint256,bytes)": FunctionFragment;
+    "onJoinPool(bytes32,address,address,uint256[],uint256,uint256,bytes)": FunctionFragment;
+    "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256[],uint256,uint256)": FunctionFragment;
     "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
-    "setSupply(uint256)": FunctionFragment;
+    "queryExit(bytes32,address,address,uint256[],uint256,uint256,bytes)": FunctionFragment;
+    "queryJoin(bytes32,address,address,uint256[],uint256,uint256,bytes)": FunctionFragment;
+    "setAssetManagerPoolConfig(address,bytes)": FunctionFragment;
+    "setPaused(bool)": FunctionFragment;
+    "setPriceRateCacheDuration(address,uint256)": FunctionFragment;
     "setSwapFeePercentage(uint256)": FunctionFragment;
     "startAmplificationParameterUpdate(uint256,uint256)": FunctionFragment;
     "stopAmplificationParameterUpdate()": FunctionFragment;
@@ -59,6 +70,7 @@ interface MetaStablePoolInterface extends ethers.utils.Interface {
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "updateOracle(uint256,uint256,uint256)": FunctionFragment;
+    "updatePriceRateCache(address)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -84,12 +96,16 @@ interface MetaStablePoolInterface extends ethers.utils.Interface {
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "errorMethod",
-    values: [BigNumberish, BigNumberish]
+    functionFragment: "enableOracle",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getActionId",
     values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAmplificationParameter",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getAuthorizer",
@@ -100,12 +116,12 @@ interface MetaStablePoolInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getLatest",
-    values: [BigNumberish]
+    functionFragment: "getLastInvariant",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getMiscDataTotalSupply",
-    values?: undefined
+    functionFragment: "getLatest",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getOracleMiscData",
@@ -121,10 +137,22 @@ interface MetaStablePoolInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getPoolId", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getPriceRateCache",
+    values: [string]
+  ): string;
   encodeFunctionData(functionFragment: "getRate", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getRateProviders",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getSample",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getScalingFactors",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getSwapFeePercentage",
@@ -152,6 +180,49 @@ interface MetaStablePoolInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "nonces", values: [string]): string;
   encodeFunctionData(
+    functionFragment: "onExitPool",
+    values: [
+      BytesLike,
+      string,
+      string,
+      BigNumberish[],
+      BigNumberish,
+      BigNumberish,
+      BytesLike
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "onJoinPool",
+    values: [
+      BytesLike,
+      string,
+      string,
+      BigNumberish[],
+      BigNumberish,
+      BigNumberish,
+      BytesLike
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "onSwap",
+    values: [
+      {
+        kind: BigNumberish;
+        tokenIn: string;
+        tokenOut: string;
+        amount: BigNumberish;
+        poolId: BytesLike;
+        lastChangeBlock: BigNumberish;
+        from: string;
+        to: string;
+        userData: BytesLike;
+      },
+      BigNumberish[],
+      BigNumberish,
+      BigNumberish
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "permit",
     values: [
       string,
@@ -164,8 +235,37 @@ interface MetaStablePoolInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "setSupply",
-    values: [BigNumberish]
+    functionFragment: "queryExit",
+    values: [
+      BytesLike,
+      string,
+      string,
+      BigNumberish[],
+      BigNumberish,
+      BigNumberish,
+      BytesLike
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "queryJoin",
+    values: [
+      BytesLike,
+      string,
+      string,
+      BigNumberish[],
+      BigNumberish,
+      BigNumberish,
+      BytesLike
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setAssetManagerPoolConfig",
+    values: [string, BytesLike]
+  ): string;
+  encodeFunctionData(functionFragment: "setPaused", values: [boolean]): string;
+  encodeFunctionData(
+    functionFragment: "setPriceRateCacheDuration",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setSwapFeePercentage",
@@ -196,6 +296,10 @@ interface MetaStablePoolInterface extends ethers.utils.Interface {
     functionFragment: "updateOracle",
     values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "updatePriceRateCache",
+    values: [string]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "DOMAIN_SEPARATOR",
@@ -214,11 +318,15 @@ interface MetaStablePoolInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "errorMethod",
+    functionFragment: "enableOracle",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getActionId",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAmplificationParameter",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -229,11 +337,11 @@ interface MetaStablePoolInterface extends ethers.utils.Interface {
     functionFragment: "getLargestSafeQueryWindow",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getLatest", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getMiscDataTotalSupply",
+    functionFragment: "getLastInvariant",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getLatest", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getOracleMiscData",
     data: BytesLike
@@ -248,8 +356,20 @@ interface MetaStablePoolInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getPoolId", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getPriceRateCache",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getRate", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getRateProviders",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getSample", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getScalingFactors",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getSwapFeePercentage",
     data: BytesLike
@@ -270,8 +390,21 @@ interface MetaStablePoolInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "onExitPool", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "onJoinPool", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "onSwap", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "permit", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "setSupply", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "queryExit", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "queryJoin", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setAssetManagerPoolConfig",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setPaused", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setPriceRateCacheDuration",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "setSwapFeePercentage",
     data: BytesLike
@@ -298,12 +431,19 @@ interface MetaStablePoolInterface extends ethers.utils.Interface {
     functionFragment: "updateOracle",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "updatePriceRateCache",
+    data: BytesLike
+  ): Result;
 
   events: {
     "AmpUpdateStarted(uint256,uint256,uint256,uint256)": EventFragment;
     "AmpUpdateStopped(uint256)": EventFragment;
     "Approval(address,address,uint256)": EventFragment;
+    "OracleEnabledChanged(bool)": EventFragment;
     "PausedStateChanged(bool)": EventFragment;
+    "PriceRateCacheUpdated(address,uint256)": EventFragment;
+    "PriceRateProviderSet(address,address,uint256)": EventFragment;
     "SwapFeePercentageChanged(uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
@@ -311,7 +451,10 @@ interface MetaStablePoolInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "AmpUpdateStarted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AmpUpdateStopped"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OracleEnabledChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PausedStateChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PriceRateCacheUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PriceRateProviderSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SwapFeePercentageChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
@@ -337,8 +480,24 @@ export type ApprovalEvent = TypedEvent<
   }
 >;
 
+export type OracleEnabledChangedEvent = TypedEvent<
+  [boolean] & { enabled: boolean }
+>;
+
 export type PausedStateChangedEvent = TypedEvent<
   [boolean] & { paused: boolean }
+>;
+
+export type PriceRateCacheUpdatedEvent = TypedEvent<
+  [string, BigNumber] & { token: string; rate: BigNumber }
+>;
+
+export type PriceRateProviderSetEvent = TypedEvent<
+  [string, string, BigNumber] & {
+    token: string;
+    provider: string;
+    cacheDuration: BigNumber;
+  }
 >;
 
 export type SwapFeePercentageChangedEvent = TypedEvent<
@@ -423,9 +582,7 @@ export class MetaStablePool extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    errorMethod(
-      balance0: BigNumberish,
-      balance1: BigNumberish,
+    enableOracle(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -434,16 +591,33 @@ export class MetaStablePool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    getAmplificationParameter(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, boolean, BigNumber] & {
+        value: BigNumber;
+        isUpdating: boolean;
+        precision: BigNumber;
+      }
+    >;
+
     getAuthorizer(overrides?: CallOverrides): Promise<[string]>;
 
     getLargestSafeQueryWindow(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getLastInvariant(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        lastInvariant: BigNumber;
+        lastInvariantAmp: BigNumber;
+      }
+    >;
 
     getLatest(
       variable: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    getMiscDataTotalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getOracleMiscData(
       overrides?: CallOverrides
@@ -476,7 +650,22 @@ export class MetaStablePool extends BaseContract {
 
     getPoolId(overrides?: CallOverrides): Promise<[string]>;
 
+    getPriceRateCache(
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        rate: BigNumber;
+        duration: BigNumber;
+        expires: BigNumber;
+      }
+    >;
+
     getRate(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getRateProviders(
+      overrides?: CallOverrides
+    ): Promise<[string[]] & { providers: string[] }>;
 
     getSample(
       index: BigNumberish,
@@ -500,6 +689,8 @@ export class MetaStablePool extends BaseContract {
         timestamp: BigNumber;
       }
     >;
+
+    getScalingFactors(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
     getSwapFeePercentage(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -532,6 +723,63 @@ export class MetaStablePool extends BaseContract {
 
     nonces(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    onExitPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    onJoinPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256[],uint256,uint256)"(
+      request: {
+        kind: BigNumberish;
+        tokenIn: string;
+        tokenOut: string;
+        amount: BigNumberish;
+        poolId: BytesLike;
+        lastChangeBlock: BigNumberish;
+        from: string;
+        to: string;
+        userData: BytesLike;
+      },
+      balances: BigNumberish[],
+      indexIn: BigNumberish,
+      indexOut: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256,uint256)"(
+      request: {
+        kind: BigNumberish;
+        tokenIn: string;
+        tokenOut: string;
+        amount: BigNumberish;
+        poolId: BytesLike;
+        lastChangeBlock: BigNumberish;
+        from: string;
+        to: string;
+        userData: BytesLike;
+      },
+      balanceTokenIn: BigNumberish,
+      balanceTokenOut: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     permit(
       owner: string,
       spender: string,
@@ -543,8 +791,42 @@ export class MetaStablePool extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setSupply(
-      totalSupply: BigNumberish,
+    queryExit(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    queryJoin(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setAssetManagerPoolConfig(
+      token: string,
+      poolConfig: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setPaused(
+      paused: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setPriceRateCacheDuration(
+      token: string,
+      duration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -585,7 +867,17 @@ export class MetaStablePool extends BaseContract {
       balance0: BigNumberish,
       balance1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber]>;
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        logSpotPrice: BigNumber;
+        logBptPrice: BigNumber;
+      }
+    >;
+
+    updatePriceRateCache(
+      token: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
@@ -618,24 +910,39 @@ export class MetaStablePool extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  errorMethod(
-    balance0: BigNumberish,
-    balance1: BigNumberish,
+  enableOracle(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   getActionId(selector: BytesLike, overrides?: CallOverrides): Promise<string>;
 
+  getAmplificationParameter(
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, boolean, BigNumber] & {
+      value: BigNumber;
+      isUpdating: boolean;
+      precision: BigNumber;
+    }
+  >;
+
   getAuthorizer(overrides?: CallOverrides): Promise<string>;
 
   getLargestSafeQueryWindow(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getLastInvariant(
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & {
+      lastInvariant: BigNumber;
+      lastInvariantAmp: BigNumber;
+    }
+  >;
 
   getLatest(
     variable: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  getMiscDataTotalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
   getOracleMiscData(
     overrides?: CallOverrides
@@ -668,7 +975,20 @@ export class MetaStablePool extends BaseContract {
 
   getPoolId(overrides?: CallOverrides): Promise<string>;
 
+  getPriceRateCache(
+    token: string,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber] & {
+      rate: BigNumber;
+      duration: BigNumber;
+      expires: BigNumber;
+    }
+  >;
+
   getRate(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getRateProviders(overrides?: CallOverrides): Promise<string[]>;
 
   getSample(
     index: BigNumberish,
@@ -692,6 +1012,8 @@ export class MetaStablePool extends BaseContract {
       timestamp: BigNumber;
     }
   >;
+
+  getScalingFactors(overrides?: CallOverrides): Promise<BigNumber[]>;
 
   getSwapFeePercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -724,6 +1046,63 @@ export class MetaStablePool extends BaseContract {
 
   nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+  onExitPool(
+    poolId: BytesLike,
+    sender: string,
+    recipient: string,
+    balances: BigNumberish[],
+    lastChangeBlock: BigNumberish,
+    protocolSwapFeePercentage: BigNumberish,
+    userData: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  onJoinPool(
+    poolId: BytesLike,
+    sender: string,
+    recipient: string,
+    balances: BigNumberish[],
+    lastChangeBlock: BigNumberish,
+    protocolSwapFeePercentage: BigNumberish,
+    userData: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256[],uint256,uint256)"(
+    request: {
+      kind: BigNumberish;
+      tokenIn: string;
+      tokenOut: string;
+      amount: BigNumberish;
+      poolId: BytesLike;
+      lastChangeBlock: BigNumberish;
+      from: string;
+      to: string;
+      userData: BytesLike;
+    },
+    balances: BigNumberish[],
+    indexIn: BigNumberish,
+    indexOut: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256,uint256)"(
+    request: {
+      kind: BigNumberish;
+      tokenIn: string;
+      tokenOut: string;
+      amount: BigNumberish;
+      poolId: BytesLike;
+      lastChangeBlock: BigNumberish;
+      from: string;
+      to: string;
+      userData: BytesLike;
+    },
+    balanceTokenIn: BigNumberish,
+    balanceTokenOut: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   permit(
     owner: string,
     spender: string,
@@ -735,8 +1114,42 @@ export class MetaStablePool extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setSupply(
-    totalSupply: BigNumberish,
+  queryExit(
+    poolId: BytesLike,
+    sender: string,
+    recipient: string,
+    balances: BigNumberish[],
+    lastChangeBlock: BigNumberish,
+    protocolSwapFeePercentage: BigNumberish,
+    userData: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  queryJoin(
+    poolId: BytesLike,
+    sender: string,
+    recipient: string,
+    balances: BigNumberish[],
+    lastChangeBlock: BigNumberish,
+    protocolSwapFeePercentage: BigNumberish,
+    userData: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setAssetManagerPoolConfig(
+    token: string,
+    poolConfig: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setPaused(
+    paused: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setPriceRateCacheDuration(
+    token: string,
+    duration: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -777,7 +1190,14 @@ export class MetaStablePool extends BaseContract {
     balance0: BigNumberish,
     balance1: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber]>;
+  ): Promise<
+    [BigNumber, BigNumber] & { logSpotPrice: BigNumber; logBptPrice: BigNumber }
+  >;
+
+  updatePriceRateCache(
+    token: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
@@ -810,27 +1230,40 @@ export class MetaStablePool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    errorMethod(
-      balance0: BigNumberish,
-      balance1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    enableOracle(overrides?: CallOverrides): Promise<void>;
 
     getActionId(
       selector: BytesLike,
       overrides?: CallOverrides
     ): Promise<string>;
 
+    getAmplificationParameter(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, boolean, BigNumber] & {
+        value: BigNumber;
+        isUpdating: boolean;
+        precision: BigNumber;
+      }
+    >;
+
     getAuthorizer(overrides?: CallOverrides): Promise<string>;
 
     getLargestSafeQueryWindow(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getLastInvariant(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        lastInvariant: BigNumber;
+        lastInvariantAmp: BigNumber;
+      }
+    >;
 
     getLatest(
       variable: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getMiscDataTotalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     getOracleMiscData(
       overrides?: CallOverrides
@@ -863,7 +1296,20 @@ export class MetaStablePool extends BaseContract {
 
     getPoolId(overrides?: CallOverrides): Promise<string>;
 
+    getPriceRateCache(
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        rate: BigNumber;
+        duration: BigNumber;
+        expires: BigNumber;
+      }
+    >;
+
     getRate(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getRateProviders(overrides?: CallOverrides): Promise<string[]>;
 
     getSample(
       index: BigNumberish,
@@ -887,6 +1333,8 @@ export class MetaStablePool extends BaseContract {
         timestamp: BigNumber;
       }
     >;
+
+    getScalingFactors(overrides?: CallOverrides): Promise<BigNumber[]>;
 
     getSwapFeePercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -919,6 +1367,73 @@ export class MetaStablePool extends BaseContract {
 
     nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    onExitPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber[], BigNumber[]] & {
+        amountsOut: BigNumber[];
+        dueProtocolFeeAmounts: BigNumber[];
+      }
+    >;
+
+    onJoinPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber[], BigNumber[]] & {
+        amountsIn: BigNumber[];
+        dueProtocolFeeAmounts: BigNumber[];
+      }
+    >;
+
+    "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256[],uint256,uint256)"(
+      request: {
+        kind: BigNumberish;
+        tokenIn: string;
+        tokenOut: string;
+        amount: BigNumberish;
+        poolId: BytesLike;
+        lastChangeBlock: BigNumberish;
+        from: string;
+        to: string;
+        userData: BytesLike;
+      },
+      balances: BigNumberish[],
+      indexIn: BigNumberish,
+      indexOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256,uint256)"(
+      request: {
+        kind: BigNumberish;
+        tokenIn: string;
+        tokenOut: string;
+        amount: BigNumberish;
+        poolId: BytesLike;
+        lastChangeBlock: BigNumberish;
+        from: string;
+        to: string;
+        userData: BytesLike;
+      },
+      balanceTokenIn: BigNumberish,
+      balanceTokenOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     permit(
       owner: string,
       spender: string,
@@ -930,8 +1445,43 @@ export class MetaStablePool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setSupply(
-      totalSupply: BigNumberish,
+    queryExit(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber[]] & { bptIn: BigNumber; amountsOut: BigNumber[] }
+    >;
+
+    queryJoin(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber[]] & { bptOut: BigNumber; amountsIn: BigNumber[] }
+    >;
+
+    setAssetManagerPoolConfig(
+      token: string,
+      poolConfig: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setPaused(paused: boolean, overrides?: CallOverrides): Promise<void>;
+
+    setPriceRateCacheDuration(
+      token: string,
+      duration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -970,7 +1520,17 @@ export class MetaStablePool extends BaseContract {
       balance0: BigNumberish,
       balance1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber]>;
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        logSpotPrice: BigNumber;
+        logBptPrice: BigNumber;
+      }
+    >;
+
+    updatePriceRateCache(
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {
@@ -1030,6 +1590,14 @@ export class MetaStablePool extends BaseContract {
       { owner: string; spender: string; value: BigNumber }
     >;
 
+    "OracleEnabledChanged(bool)"(
+      enabled?: null
+    ): TypedEventFilter<[boolean], { enabled: boolean }>;
+
+    OracleEnabledChanged(
+      enabled?: null
+    ): TypedEventFilter<[boolean], { enabled: boolean }>;
+
     "PausedStateChanged(bool)"(
       paused?: null
     ): TypedEventFilter<[boolean], { paused: boolean }>;
@@ -1037,6 +1605,40 @@ export class MetaStablePool extends BaseContract {
     PausedStateChanged(
       paused?: null
     ): TypedEventFilter<[boolean], { paused: boolean }>;
+
+    "PriceRateCacheUpdated(address,uint256)"(
+      token?: string | null,
+      rate?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { token: string; rate: BigNumber }
+    >;
+
+    PriceRateCacheUpdated(
+      token?: string | null,
+      rate?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { token: string; rate: BigNumber }
+    >;
+
+    "PriceRateProviderSet(address,address,uint256)"(
+      token?: string | null,
+      provider?: string | null,
+      cacheDuration?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { token: string; provider: string; cacheDuration: BigNumber }
+    >;
+
+    PriceRateProviderSet(
+      token?: string | null,
+      provider?: string | null,
+      cacheDuration?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { token: string; provider: string; cacheDuration: BigNumber }
+    >;
 
     "SwapFeePercentageChanged(uint256)"(
       swapFeePercentage?: null
@@ -1096,9 +1698,7 @@ export class MetaStablePool extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    errorMethod(
-      balance0: BigNumberish,
-      balance1: BigNumberish,
+    enableOracle(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1107,16 +1707,18 @@ export class MetaStablePool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getAmplificationParameter(overrides?: CallOverrides): Promise<BigNumber>;
+
     getAuthorizer(overrides?: CallOverrides): Promise<BigNumber>;
 
     getLargestSafeQueryWindow(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getLastInvariant(overrides?: CallOverrides): Promise<BigNumber>;
 
     getLatest(
       variable: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getMiscDataTotalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     getOracleMiscData(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1131,12 +1733,21 @@ export class MetaStablePool extends BaseContract {
 
     getPoolId(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getPriceRateCache(
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getRate(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getRateProviders(overrides?: CallOverrides): Promise<BigNumber>;
 
     getSample(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getScalingFactors(overrides?: CallOverrides): Promise<BigNumber>;
 
     getSwapFeePercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1169,6 +1780,63 @@ export class MetaStablePool extends BaseContract {
 
     nonces(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    onExitPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    onJoinPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256[],uint256,uint256)"(
+      request: {
+        kind: BigNumberish;
+        tokenIn: string;
+        tokenOut: string;
+        amount: BigNumberish;
+        poolId: BytesLike;
+        lastChangeBlock: BigNumberish;
+        from: string;
+        to: string;
+        userData: BytesLike;
+      },
+      balances: BigNumberish[],
+      indexIn: BigNumberish,
+      indexOut: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256,uint256)"(
+      request: {
+        kind: BigNumberish;
+        tokenIn: string;
+        tokenOut: string;
+        amount: BigNumberish;
+        poolId: BytesLike;
+        lastChangeBlock: BigNumberish;
+        from: string;
+        to: string;
+        userData: BytesLike;
+      },
+      balanceTokenIn: BigNumberish,
+      balanceTokenOut: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     permit(
       owner: string,
       spender: string,
@@ -1180,8 +1848,42 @@ export class MetaStablePool extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setSupply(
-      totalSupply: BigNumberish,
+    queryExit(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    queryJoin(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setAssetManagerPoolConfig(
+      token: string,
+      poolConfig: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setPaused(
+      paused: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setPriceRateCacheDuration(
+      token: string,
+      duration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1223,6 +1925,11 @@ export class MetaStablePool extends BaseContract {
       balance1: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    updatePriceRateCache(
+      token: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1259,14 +1966,16 @@ export class MetaStablePool extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    errorMethod(
-      balance0: BigNumberish,
-      balance1: BigNumberish,
+    enableOracle(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     getActionId(
       selector: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getAmplificationParameter(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1276,12 +1985,10 @@ export class MetaStablePool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getLastInvariant(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getLatest(
       variable: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getMiscDataTotalSupply(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1298,12 +2005,21 @@ export class MetaStablePool extends BaseContract {
 
     getPoolId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getPriceRateCache(
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getRateProviders(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getSample(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getScalingFactors(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getSwapFeePercentage(
       overrides?: CallOverrides
@@ -1341,6 +2057,63 @@ export class MetaStablePool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    onExitPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    onJoinPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256[],uint256,uint256)"(
+      request: {
+        kind: BigNumberish;
+        tokenIn: string;
+        tokenOut: string;
+        amount: BigNumberish;
+        poolId: BytesLike;
+        lastChangeBlock: BigNumberish;
+        from: string;
+        to: string;
+        userData: BytesLike;
+      },
+      balances: BigNumberish[],
+      indexIn: BigNumberish,
+      indexOut: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256,uint256)"(
+      request: {
+        kind: BigNumberish;
+        tokenIn: string;
+        tokenOut: string;
+        amount: BigNumberish;
+        poolId: BytesLike;
+        lastChangeBlock: BigNumberish;
+        from: string;
+        to: string;
+        userData: BytesLike;
+      },
+      balanceTokenIn: BigNumberish,
+      balanceTokenOut: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     permit(
       owner: string,
       spender: string,
@@ -1352,8 +2125,42 @@ export class MetaStablePool extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setSupply(
-      totalSupply: BigNumberish,
+    queryExit(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    queryJoin(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setAssetManagerPoolConfig(
+      token: string,
+      poolConfig: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setPaused(
+      paused: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setPriceRateCacheDuration(
+      token: string,
+      duration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1394,6 +2201,11 @@ export class MetaStablePool extends BaseContract {
       balance0: BigNumberish,
       balance1: BigNumberish,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    updatePriceRateCache(
+      token: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

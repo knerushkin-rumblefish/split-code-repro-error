@@ -19,7 +19,7 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
-interface StablePoolInterface extends ethers.utils.Interface {
+interface BaseMinimalSwapInfoPoolInterface extends ethers.utils.Interface {
   functions: {
     "DOMAIN_SEPARATOR()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
@@ -28,13 +28,10 @@ interface StablePoolInterface extends ethers.utils.Interface {
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
     "getActionId(bytes4)": FunctionFragment;
-    "getAmplificationParameter()": FunctionFragment;
     "getAuthorizer()": FunctionFragment;
-    "getLastInvariant()": FunctionFragment;
     "getOwner()": FunctionFragment;
     "getPausedState()": FunctionFragment;
     "getPoolId()": FunctionFragment;
-    "getRate()": FunctionFragment;
     "getScalingFactors()": FunctionFragment;
     "getSwapFeePercentage()": FunctionFragment;
     "getVault()": FunctionFragment;
@@ -44,15 +41,13 @@ interface StablePoolInterface extends ethers.utils.Interface {
     "nonces(address)": FunctionFragment;
     "onExitPool(bytes32,address,address,uint256[],uint256,uint256,bytes)": FunctionFragment;
     "onJoinPool(bytes32,address,address,uint256[],uint256,uint256,bytes)": FunctionFragment;
-    "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256[],uint256,uint256)": FunctionFragment;
+    "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256,uint256)": FunctionFragment;
     "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "queryExit(bytes32,address,address,uint256[],uint256,uint256,bytes)": FunctionFragment;
     "queryJoin(bytes32,address,address,uint256[],uint256,uint256,bytes)": FunctionFragment;
     "setAssetManagerPoolConfig(address,bytes)": FunctionFragment;
     "setPaused(bool)": FunctionFragment;
     "setSwapFeePercentage(uint256)": FunctionFragment;
-    "startAmplificationParameterUpdate(uint256,uint256)": FunctionFragment;
-    "stopAmplificationParameterUpdate()": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
@@ -82,15 +77,7 @@ interface StablePoolInterface extends ethers.utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "getAmplificationParameter",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "getAuthorizer",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getLastInvariant",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getOwner", values?: undefined): string;
@@ -99,7 +86,6 @@ interface StablePoolInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getPoolId", values?: undefined): string;
-  encodeFunctionData(functionFragment: "getRate", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getScalingFactors",
     values?: undefined
@@ -157,7 +143,6 @@ interface StablePoolInterface extends ethers.utils.Interface {
         to: string;
         userData: BytesLike;
       },
-      BigNumberish[],
       BigNumberish,
       BigNumberish
     ]
@@ -207,14 +192,6 @@ interface StablePoolInterface extends ethers.utils.Interface {
     functionFragment: "setSwapFeePercentage",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "startAmplificationParameterUpdate",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "stopAmplificationParameterUpdate",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
@@ -246,15 +223,7 @@ interface StablePoolInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getAmplificationParameter",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getAuthorizer",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getLastInvariant",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getOwner", data: BytesLike): Result;
@@ -263,7 +232,6 @@ interface StablePoolInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getPoolId", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getRate", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getScalingFactors",
     data: BytesLike
@@ -295,14 +263,6 @@ interface StablePoolInterface extends ethers.utils.Interface {
     functionFragment: "setSwapFeePercentage",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "startAmplificationParameterUpdate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "stopAmplificationParameterUpdate",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
@@ -315,34 +275,17 @@ interface StablePoolInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "AmpUpdateStarted(uint256,uint256,uint256,uint256)": EventFragment;
-    "AmpUpdateStopped(uint256)": EventFragment;
     "Approval(address,address,uint256)": EventFragment;
     "PausedStateChanged(bool)": EventFragment;
     "SwapFeePercentageChanged(uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AmpUpdateStarted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AmpUpdateStopped"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PausedStateChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SwapFeePercentageChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
-
-export type AmpUpdateStartedEvent = TypedEvent<
-  [BigNumber, BigNumber, BigNumber, BigNumber] & {
-    startValue: BigNumber;
-    endValue: BigNumber;
-    startTime: BigNumber;
-    endTime: BigNumber;
-  }
->;
-
-export type AmpUpdateStoppedEvent = TypedEvent<
-  [BigNumber] & { currentValue: BigNumber }
->;
 
 export type ApprovalEvent = TypedEvent<
   [string, string, BigNumber] & {
@@ -364,7 +307,7 @@ export type TransferEvent = TypedEvent<
   [string, string, BigNumber] & { from: string; to: string; value: BigNumber }
 >;
 
-export class StablePool extends BaseContract {
+export class BaseMinimalSwapInfoPool extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -405,7 +348,7 @@ export class StablePool extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: StablePoolInterface;
+  interface: BaseMinimalSwapInfoPoolInterface;
 
   functions: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
@@ -437,26 +380,7 @@ export class StablePool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    getAmplificationParameter(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, boolean, BigNumber] & {
-        value: BigNumber;
-        isUpdating: boolean;
-        precision: BigNumber;
-      }
-    >;
-
     getAuthorizer(overrides?: CallOverrides): Promise<[string]>;
-
-    getLastInvariant(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & {
-        lastInvariant: BigNumber;
-        lastInvariantAmp: BigNumber;
-      }
-    >;
 
     getOwner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -471,8 +395,6 @@ export class StablePool extends BaseContract {
     >;
 
     getPoolId(overrides?: CallOverrides): Promise<[string]>;
-
-    getRate(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getScalingFactors(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
@@ -518,25 +440,7 @@ export class StablePool extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256[],uint256,uint256)"(
-      swapRequest: {
-        kind: BigNumberish;
-        tokenIn: string;
-        tokenOut: string;
-        amount: BigNumberish;
-        poolId: BytesLike;
-        lastChangeBlock: BigNumberish;
-        from: string;
-        to: string;
-        userData: BytesLike;
-      },
-      balances: BigNumberish[],
-      indexIn: BigNumberish,
-      indexOut: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256,uint256)"(
+    onSwap(
       request: {
         kind: BigNumberish;
         tokenIn: string;
@@ -602,16 +506,6 @@ export class StablePool extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    startAmplificationParameterUpdate(
-      rawEndValue: BigNumberish,
-      endTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    stopAmplificationParameterUpdate(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     symbol(overrides?: CallOverrides): Promise<[string]>;
 
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -656,26 +550,7 @@ export class StablePool extends BaseContract {
 
   getActionId(selector: BytesLike, overrides?: CallOverrides): Promise<string>;
 
-  getAmplificationParameter(
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, boolean, BigNumber] & {
-      value: BigNumber;
-      isUpdating: boolean;
-      precision: BigNumber;
-    }
-  >;
-
   getAuthorizer(overrides?: CallOverrides): Promise<string>;
-
-  getLastInvariant(
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber] & {
-      lastInvariant: BigNumber;
-      lastInvariantAmp: BigNumber;
-    }
-  >;
 
   getOwner(overrides?: CallOverrides): Promise<string>;
 
@@ -690,8 +565,6 @@ export class StablePool extends BaseContract {
   >;
 
   getPoolId(overrides?: CallOverrides): Promise<string>;
-
-  getRate(overrides?: CallOverrides): Promise<BigNumber>;
 
   getScalingFactors(overrides?: CallOverrides): Promise<BigNumber[]>;
 
@@ -737,25 +610,7 @@ export class StablePool extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256[],uint256,uint256)"(
-    swapRequest: {
-      kind: BigNumberish;
-      tokenIn: string;
-      tokenOut: string;
-      amount: BigNumberish;
-      poolId: BytesLike;
-      lastChangeBlock: BigNumberish;
-      from: string;
-      to: string;
-      userData: BytesLike;
-    },
-    balances: BigNumberish[],
-    indexIn: BigNumberish,
-    indexOut: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256,uint256)"(
+  onSwap(
     request: {
       kind: BigNumberish;
       tokenIn: string;
@@ -821,16 +676,6 @@ export class StablePool extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  startAmplificationParameterUpdate(
-    rawEndValue: BigNumberish,
-    endTime: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  stopAmplificationParameterUpdate(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   symbol(overrides?: CallOverrides): Promise<string>;
 
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
@@ -878,26 +723,7 @@ export class StablePool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    getAmplificationParameter(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, boolean, BigNumber] & {
-        value: BigNumber;
-        isUpdating: boolean;
-        precision: BigNumber;
-      }
-    >;
-
     getAuthorizer(overrides?: CallOverrides): Promise<string>;
-
-    getLastInvariant(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & {
-        lastInvariant: BigNumber;
-        lastInvariantAmp: BigNumber;
-      }
-    >;
 
     getOwner(overrides?: CallOverrides): Promise<string>;
 
@@ -912,8 +738,6 @@ export class StablePool extends BaseContract {
     >;
 
     getPoolId(overrides?: CallOverrides): Promise<string>;
-
-    getRate(overrides?: CallOverrides): Promise<BigNumber>;
 
     getScalingFactors(overrides?: CallOverrides): Promise<BigNumber[]>;
 
@@ -959,25 +783,7 @@ export class StablePool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[], BigNumber[]]>;
 
-    "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256[],uint256,uint256)"(
-      swapRequest: {
-        kind: BigNumberish;
-        tokenIn: string;
-        tokenOut: string;
-        amount: BigNumberish;
-        poolId: BytesLike;
-        lastChangeBlock: BigNumberish;
-        from: string;
-        to: string;
-        userData: BytesLike;
-      },
-      balances: BigNumberish[],
-      indexIn: BigNumberish,
-      indexOut: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256,uint256)"(
+    onSwap(
       request: {
         kind: BigNumberish;
         tokenIn: string;
@@ -1044,14 +850,6 @@ export class StablePool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    startAmplificationParameterUpdate(
-      rawEndValue: BigNumberish,
-      endTime: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    stopAmplificationParameterUpdate(overrides?: CallOverrides): Promise<void>;
-
     symbol(overrides?: CallOverrides): Promise<string>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1071,44 +869,6 @@ export class StablePool extends BaseContract {
   };
 
   filters: {
-    "AmpUpdateStarted(uint256,uint256,uint256,uint256)"(
-      startValue?: null,
-      endValue?: null,
-      startTime?: null,
-      endTime?: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber, BigNumber],
-      {
-        startValue: BigNumber;
-        endValue: BigNumber;
-        startTime: BigNumber;
-        endTime: BigNumber;
-      }
-    >;
-
-    AmpUpdateStarted(
-      startValue?: null,
-      endValue?: null,
-      startTime?: null,
-      endTime?: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber, BigNumber],
-      {
-        startValue: BigNumber;
-        endValue: BigNumber;
-        startTime: BigNumber;
-        endTime: BigNumber;
-      }
-    >;
-
-    "AmpUpdateStopped(uint256)"(
-      currentValue?: null
-    ): TypedEventFilter<[BigNumber], { currentValue: BigNumber }>;
-
-    AmpUpdateStopped(
-      currentValue?: null
-    ): TypedEventFilter<[BigNumber], { currentValue: BigNumber }>;
-
     "Approval(address,address,uint256)"(
       owner?: string | null,
       spender?: string | null,
@@ -1192,19 +952,13 @@ export class StablePool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getAmplificationParameter(overrides?: CallOverrides): Promise<BigNumber>;
-
     getAuthorizer(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getLastInvariant(overrides?: CallOverrides): Promise<BigNumber>;
 
     getOwner(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPausedState(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPoolId(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getRate(overrides?: CallOverrides): Promise<BigNumber>;
 
     getScalingFactors(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1250,25 +1004,7 @@ export class StablePool extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256[],uint256,uint256)"(
-      swapRequest: {
-        kind: BigNumberish;
-        tokenIn: string;
-        tokenOut: string;
-        amount: BigNumberish;
-        poolId: BytesLike;
-        lastChangeBlock: BigNumberish;
-        from: string;
-        to: string;
-        userData: BytesLike;
-      },
-      balances: BigNumberish[],
-      indexIn: BigNumberish,
-      indexOut: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256,uint256)"(
+    onSwap(
       request: {
         kind: BigNumberish;
         tokenIn: string;
@@ -1331,16 +1067,6 @@ export class StablePool extends BaseContract {
 
     setSwapFeePercentage(
       swapFeePercentage: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    startAmplificationParameterUpdate(
-      rawEndValue: BigNumberish,
-      endTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    stopAmplificationParameterUpdate(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1395,21 +1121,13 @@ export class StablePool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getAmplificationParameter(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getAuthorizer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getLastInvariant(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getPausedState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getPoolId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getScalingFactors(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1460,25 +1178,7 @@ export class StablePool extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256[],uint256,uint256)"(
-      swapRequest: {
-        kind: BigNumberish;
-        tokenIn: string;
-        tokenOut: string;
-        amount: BigNumberish;
-        poolId: BytesLike;
-        lastChangeBlock: BigNumberish;
-        from: string;
-        to: string;
-        userData: BytesLike;
-      },
-      balances: BigNumberish[],
-      indexIn: BigNumberish,
-      indexOut: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256,uint256)"(
+    onSwap(
       request: {
         kind: BigNumberish;
         tokenIn: string;
@@ -1541,16 +1241,6 @@ export class StablePool extends BaseContract {
 
     setSwapFeePercentage(
       swapFeePercentage: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    startAmplificationParameterUpdate(
-      rawEndValue: BigNumberish,
-      endTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    stopAmplificationParameterUpdate(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

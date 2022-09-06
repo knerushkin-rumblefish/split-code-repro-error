@@ -4,7 +4,10 @@
 
 import { Contract, Signer, utils } from "ethers";
 import { Provider } from "@ethersproject/providers";
-import type { BasePool, BasePoolInterface } from "../BasePool";
+import type {
+  BaseMinimalSwapInfoPool,
+  BaseMinimalSwapInfoPoolInterface,
+} from "../BaseMinimalSwapInfoPool";
 
 const _abi = [
   {
@@ -505,6 +508,82 @@ const _abi = [
   {
     inputs: [
       {
+        components: [
+          {
+            internalType: "enum IVault.SwapKind",
+            name: "kind",
+            type: "uint8",
+          },
+          {
+            internalType: "contract IERC20",
+            name: "tokenIn",
+            type: "address",
+          },
+          {
+            internalType: "contract IERC20",
+            name: "tokenOut",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "amount",
+            type: "uint256",
+          },
+          {
+            internalType: "bytes32",
+            name: "poolId",
+            type: "bytes32",
+          },
+          {
+            internalType: "uint256",
+            name: "lastChangeBlock",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "from",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "to",
+            type: "address",
+          },
+          {
+            internalType: "bytes",
+            name: "userData",
+            type: "bytes",
+          },
+        ],
+        internalType: "struct IPoolSwapStructs.SwapRequest",
+        name: "request",
+        type: "tuple",
+      },
+      {
+        internalType: "uint256",
+        name: "balanceTokenIn",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "balanceTokenOut",
+        type: "uint256",
+      },
+    ],
+    name: "onSwap",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "owner",
         type: "address",
@@ -778,15 +857,19 @@ const _abi = [
   },
 ];
 
-export class BasePool__factory {
+export class BaseMinimalSwapInfoPool__factory {
   static readonly abi = _abi;
-  static createInterface(): BasePoolInterface {
-    return new utils.Interface(_abi) as BasePoolInterface;
+  static createInterface(): BaseMinimalSwapInfoPoolInterface {
+    return new utils.Interface(_abi) as BaseMinimalSwapInfoPoolInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): BasePool {
-    return new Contract(address, _abi, signerOrProvider) as BasePool;
+  ): BaseMinimalSwapInfoPool {
+    return new Contract(
+      address,
+      _abi,
+      signerOrProvider
+    ) as BaseMinimalSwapInfoPool;
   }
 }

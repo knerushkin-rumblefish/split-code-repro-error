@@ -19,7 +19,7 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
-interface StablePoolInterface extends ethers.utils.Interface {
+interface MetaStablePoolLessThan24Interface extends ethers.utils.Interface {
   functions: {
     "DOMAIN_SEPARATOR()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
@@ -27,16 +27,25 @@ interface StablePoolInterface extends ethers.utils.Interface {
     "balanceOf(address)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
+    "dirtyUninitializedOracleSamples(uint256,uint256)": FunctionFragment;
+    "enableOracle()": FunctionFragment;
     "getActionId(bytes4)": FunctionFragment;
     "getAmplificationParameter()": FunctionFragment;
     "getAuthorizer()": FunctionFragment;
+    "getLargestSafeQueryWindow()": FunctionFragment;
     "getLastInvariant()": FunctionFragment;
+    "getLatest(uint8)": FunctionFragment;
+    "getOracleMiscData()": FunctionFragment;
     "getOwner()": FunctionFragment;
+    "getPastAccumulators((uint8,uint256)[])": FunctionFragment;
     "getPausedState()": FunctionFragment;
     "getPoolId()": FunctionFragment;
     "getRate()": FunctionFragment;
+    "getSample(uint256)": FunctionFragment;
     "getScalingFactors()": FunctionFragment;
     "getSwapFeePercentage()": FunctionFragment;
+    "getTimeWeightedAverage((uint8,uint256,uint256)[])": FunctionFragment;
+    "getTotalSamples()": FunctionFragment;
     "getVault()": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
@@ -57,6 +66,7 @@ interface StablePoolInterface extends ethers.utils.Interface {
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
+    "updateOracle(uint256,uint256,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -78,6 +88,14 @@ interface StablePoolInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "dirtyUninitializedOracleSamples",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "enableOracle",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getActionId",
     values: [BytesLike]
   ): string;
@@ -90,10 +108,26 @@ interface StablePoolInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getLargestSafeQueryWindow",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getLastInvariant",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "getLatest",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getOracleMiscData",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "getOwner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getPastAccumulators",
+    values: [{ variable: BigNumberish; ago: BigNumberish }[]]
+  ): string;
   encodeFunctionData(
     functionFragment: "getPausedState",
     values?: undefined
@@ -101,11 +135,25 @@ interface StablePoolInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "getPoolId", values?: undefined): string;
   encodeFunctionData(functionFragment: "getRate", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "getSample",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getScalingFactors",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getSwapFeePercentage",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTimeWeightedAverage",
+    values: [
+      { variable: BigNumberish; secs: BigNumberish; ago: BigNumberish }[]
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTotalSamples",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getVault", values?: undefined): string;
@@ -228,6 +276,10 @@ interface StablePoolInterface extends ethers.utils.Interface {
     functionFragment: "transferFrom",
     values: [string, string, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "updateOracle",
+    values: [BigNumberish, BigNumberish, BigNumberish]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "DOMAIN_SEPARATOR",
@@ -239,6 +291,14 @@ interface StablePoolInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "decreaseAllowance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "dirtyUninitializedOracleSamples",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "enableOracle",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -254,22 +314,44 @@ interface StablePoolInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getLargestSafeQueryWindow",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getLastInvariant",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getLatest", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getOracleMiscData",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getOwner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getPastAccumulators",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getPausedState",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getPoolId", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getRate", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getSample", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getScalingFactors",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getSwapFeePercentage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTimeWeightedAverage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTotalSamples",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
@@ -313,12 +395,19 @@ interface StablePoolInterface extends ethers.utils.Interface {
     functionFragment: "transferFrom",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateOracle",
+    data: BytesLike
+  ): Result;
 
   events: {
     "AmpUpdateStarted(uint256,uint256,uint256,uint256)": EventFragment;
     "AmpUpdateStopped(uint256)": EventFragment;
     "Approval(address,address,uint256)": EventFragment;
+    "OracleEnabledChanged(bool)": EventFragment;
     "PausedStateChanged(bool)": EventFragment;
+    "PriceRateCacheUpdated(address,uint256)": EventFragment;
+    "PriceRateProviderSet(address,address,uint256)": EventFragment;
     "SwapFeePercentageChanged(uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
@@ -326,7 +415,10 @@ interface StablePoolInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "AmpUpdateStarted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AmpUpdateStopped"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OracleEnabledChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PausedStateChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PriceRateCacheUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PriceRateProviderSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SwapFeePercentageChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
@@ -352,8 +444,24 @@ export type ApprovalEvent = TypedEvent<
   }
 >;
 
+export type OracleEnabledChangedEvent = TypedEvent<
+  [boolean] & { enabled: boolean }
+>;
+
 export type PausedStateChangedEvent = TypedEvent<
   [boolean] & { paused: boolean }
+>;
+
+export type PriceRateCacheUpdatedEvent = TypedEvent<
+  [string, BigNumber] & { token: string; rate: BigNumber }
+>;
+
+export type PriceRateProviderSetEvent = TypedEvent<
+  [string, string, BigNumber] & {
+    token: string;
+    provider: string;
+    cacheDuration: BigNumber;
+  }
 >;
 
 export type SwapFeePercentageChangedEvent = TypedEvent<
@@ -364,7 +472,7 @@ export type TransferEvent = TypedEvent<
   [string, string, BigNumber] & { from: string; to: string; value: BigNumber }
 >;
 
-export class StablePool extends BaseContract {
+export class MetaStablePoolLessThan24 extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -405,7 +513,7 @@ export class StablePool extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: StablePoolInterface;
+  interface: MetaStablePoolLessThan24Interface;
 
   functions: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
@@ -432,6 +540,16 @@ export class StablePool extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    dirtyUninitializedOracleSamples(
+      startIndex: BigNumberish,
+      endIndex: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    enableOracle(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     getActionId(
       selector: BytesLike,
       overrides?: CallOverrides
@@ -449,6 +567,8 @@ export class StablePool extends BaseContract {
 
     getAuthorizer(overrides?: CallOverrides): Promise<[string]>;
 
+    getLargestSafeQueryWindow(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     getLastInvariant(
       overrides?: CallOverrides
     ): Promise<
@@ -458,7 +578,29 @@ export class StablePool extends BaseContract {
       }
     >;
 
+    getLatest(
+      variable: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getOracleMiscData(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, boolean] & {
+        logInvariant: BigNumber;
+        logTotalSupply: BigNumber;
+        oracleSampleCreationTimestamp: BigNumber;
+        oracleIndex: BigNumber;
+        oracleEnabled: boolean;
+      }
+    >;
+
     getOwner(overrides?: CallOverrides): Promise<[string]>;
+
+    getPastAccumulators(
+      queries: { variable: BigNumberish; ago: BigNumberish }[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]] & { results: BigNumber[] }>;
 
     getPausedState(
       overrides?: CallOverrides
@@ -474,9 +616,43 @@ export class StablePool extends BaseContract {
 
     getRate(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getSample(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        logPairPrice: BigNumber;
+        accLogPairPrice: BigNumber;
+        logBptPrice: BigNumber;
+        accLogBptPrice: BigNumber;
+        logInvariant: BigNumber;
+        accLogInvariant: BigNumber;
+        timestamp: BigNumber;
+      }
+    >;
+
     getScalingFactors(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
     getSwapFeePercentage(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getTimeWeightedAverage(
+      queries: {
+        variable: BigNumberish;
+        secs: BigNumberish;
+        ago: BigNumberish;
+      }[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]] & { results: BigNumber[] }>;
+
+    getTotalSamples(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getVault(overrides?: CallOverrides): Promise<[string]>;
 
@@ -519,7 +695,7 @@ export class StablePool extends BaseContract {
     ): Promise<ContractTransaction>;
 
     "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256[],uint256,uint256)"(
-      swapRequest: {
+      request: {
         kind: BigNumberish;
         tokenIn: string;
         tokenOut: string;
@@ -628,6 +804,18 @@ export class StablePool extends BaseContract {
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    updateOracle(
+      lastChangeBlock: BigNumberish,
+      balance0: BigNumberish,
+      balance1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        logSpotPrice: BigNumber;
+        logBptPrice: BigNumber;
+      }
+    >;
   };
 
   DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
@@ -654,6 +842,16 @@ export class StablePool extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  dirtyUninitializedOracleSamples(
+    startIndex: BigNumberish,
+    endIndex: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  enableOracle(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   getActionId(selector: BytesLike, overrides?: CallOverrides): Promise<string>;
 
   getAmplificationParameter(
@@ -668,6 +866,8 @@ export class StablePool extends BaseContract {
 
   getAuthorizer(overrides?: CallOverrides): Promise<string>;
 
+  getLargestSafeQueryWindow(overrides?: CallOverrides): Promise<BigNumber>;
+
   getLastInvariant(
     overrides?: CallOverrides
   ): Promise<
@@ -677,7 +877,29 @@ export class StablePool extends BaseContract {
     }
   >;
 
+  getLatest(
+    variable: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getOracleMiscData(
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber, boolean] & {
+      logInvariant: BigNumber;
+      logTotalSupply: BigNumber;
+      oracleSampleCreationTimestamp: BigNumber;
+      oracleIndex: BigNumber;
+      oracleEnabled: boolean;
+    }
+  >;
+
   getOwner(overrides?: CallOverrides): Promise<string>;
+
+  getPastAccumulators(
+    queries: { variable: BigNumberish; ago: BigNumberish }[],
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
 
   getPausedState(
     overrides?: CallOverrides
@@ -693,9 +915,43 @@ export class StablePool extends BaseContract {
 
   getRate(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getSample(
+    index: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber
+    ] & {
+      logPairPrice: BigNumber;
+      accLogPairPrice: BigNumber;
+      logBptPrice: BigNumber;
+      accLogBptPrice: BigNumber;
+      logInvariant: BigNumber;
+      accLogInvariant: BigNumber;
+      timestamp: BigNumber;
+    }
+  >;
+
   getScalingFactors(overrides?: CallOverrides): Promise<BigNumber[]>;
 
   getSwapFeePercentage(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getTimeWeightedAverage(
+    queries: {
+      variable: BigNumberish;
+      secs: BigNumberish;
+      ago: BigNumberish;
+    }[],
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  getTotalSamples(overrides?: CallOverrides): Promise<BigNumber>;
 
   getVault(overrides?: CallOverrides): Promise<string>;
 
@@ -738,7 +994,7 @@ export class StablePool extends BaseContract {
   ): Promise<ContractTransaction>;
 
   "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256[],uint256,uint256)"(
-    swapRequest: {
+    request: {
       kind: BigNumberish;
       tokenIn: string;
       tokenOut: string;
@@ -848,6 +1104,15 @@ export class StablePool extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  updateOracle(
+    lastChangeBlock: BigNumberish,
+    balance0: BigNumberish,
+    balance1: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & { logSpotPrice: BigNumber; logBptPrice: BigNumber }
+  >;
+
   callStatic: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
@@ -873,6 +1138,14 @@ export class StablePool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    dirtyUninitializedOracleSamples(
+      startIndex: BigNumberish,
+      endIndex: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    enableOracle(overrides?: CallOverrides): Promise<void>;
+
     getActionId(
       selector: BytesLike,
       overrides?: CallOverrides
@@ -890,6 +1163,8 @@ export class StablePool extends BaseContract {
 
     getAuthorizer(overrides?: CallOverrides): Promise<string>;
 
+    getLargestSafeQueryWindow(overrides?: CallOverrides): Promise<BigNumber>;
+
     getLastInvariant(
       overrides?: CallOverrides
     ): Promise<
@@ -899,7 +1174,29 @@ export class StablePool extends BaseContract {
       }
     >;
 
+    getLatest(
+      variable: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getOracleMiscData(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, boolean] & {
+        logInvariant: BigNumber;
+        logTotalSupply: BigNumber;
+        oracleSampleCreationTimestamp: BigNumber;
+        oracleIndex: BigNumber;
+        oracleEnabled: boolean;
+      }
+    >;
+
     getOwner(overrides?: CallOverrides): Promise<string>;
+
+    getPastAccumulators(
+      queries: { variable: BigNumberish; ago: BigNumberish }[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
 
     getPausedState(
       overrides?: CallOverrides
@@ -915,9 +1212,43 @@ export class StablePool extends BaseContract {
 
     getRate(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getSample(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        logPairPrice: BigNumber;
+        accLogPairPrice: BigNumber;
+        logBptPrice: BigNumber;
+        accLogBptPrice: BigNumber;
+        logInvariant: BigNumber;
+        accLogInvariant: BigNumber;
+        timestamp: BigNumber;
+      }
+    >;
+
     getScalingFactors(overrides?: CallOverrides): Promise<BigNumber[]>;
 
     getSwapFeePercentage(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getTimeWeightedAverage(
+      queries: {
+        variable: BigNumberish;
+        secs: BigNumberish;
+        ago: BigNumberish;
+      }[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    getTotalSamples(overrides?: CallOverrides): Promise<BigNumber>;
 
     getVault(overrides?: CallOverrides): Promise<string>;
 
@@ -946,7 +1277,12 @@ export class StablePool extends BaseContract {
       protocolSwapFeePercentage: BigNumberish,
       userData: BytesLike,
       overrides?: CallOverrides
-    ): Promise<[BigNumber[], BigNumber[]]>;
+    ): Promise<
+      [BigNumber[], BigNumber[]] & {
+        amountsOut: BigNumber[];
+        dueProtocolFeeAmounts: BigNumber[];
+      }
+    >;
 
     onJoinPool(
       poolId: BytesLike,
@@ -957,10 +1293,15 @@ export class StablePool extends BaseContract {
       protocolSwapFeePercentage: BigNumberish,
       userData: BytesLike,
       overrides?: CallOverrides
-    ): Promise<[BigNumber[], BigNumber[]]>;
+    ): Promise<
+      [BigNumber[], BigNumber[]] & {
+        amountsIn: BigNumber[];
+        dueProtocolFeeAmounts: BigNumber[];
+      }
+    >;
 
     "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256[],uint256,uint256)"(
-      swapRequest: {
+      request: {
         kind: BigNumberish;
         tokenIn: string;
         tokenOut: string;
@@ -1068,6 +1409,18 @@ export class StablePool extends BaseContract {
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    updateOracle(
+      lastChangeBlock: BigNumberish,
+      balance0: BigNumberish,
+      balance1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        logSpotPrice: BigNumber;
+        logBptPrice: BigNumber;
+      }
+    >;
   };
 
   filters: {
@@ -1127,6 +1480,14 @@ export class StablePool extends BaseContract {
       { owner: string; spender: string; value: BigNumber }
     >;
 
+    "OracleEnabledChanged(bool)"(
+      enabled?: null
+    ): TypedEventFilter<[boolean], { enabled: boolean }>;
+
+    OracleEnabledChanged(
+      enabled?: null
+    ): TypedEventFilter<[boolean], { enabled: boolean }>;
+
     "PausedStateChanged(bool)"(
       paused?: null
     ): TypedEventFilter<[boolean], { paused: boolean }>;
@@ -1134,6 +1495,40 @@ export class StablePool extends BaseContract {
     PausedStateChanged(
       paused?: null
     ): TypedEventFilter<[boolean], { paused: boolean }>;
+
+    "PriceRateCacheUpdated(address,uint256)"(
+      token?: string | null,
+      rate?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { token: string; rate: BigNumber }
+    >;
+
+    PriceRateCacheUpdated(
+      token?: string | null,
+      rate?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { token: string; rate: BigNumber }
+    >;
+
+    "PriceRateProviderSet(address,address,uint256)"(
+      token?: string | null,
+      provider?: string | null,
+      cacheDuration?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { token: string; provider: string; cacheDuration: BigNumber }
+    >;
+
+    PriceRateProviderSet(
+      token?: string | null,
+      provider?: string | null,
+      cacheDuration?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { token: string; provider: string; cacheDuration: BigNumber }
+    >;
 
     "SwapFeePercentageChanged(uint256)"(
       swapFeePercentage?: null
@@ -1187,6 +1582,16 @@ export class StablePool extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    dirtyUninitializedOracleSamples(
+      startIndex: BigNumberish,
+      endIndex: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    enableOracle(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     getActionId(
       selector: BytesLike,
       overrides?: CallOverrides
@@ -1196,9 +1601,23 @@ export class StablePool extends BaseContract {
 
     getAuthorizer(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getLargestSafeQueryWindow(overrides?: CallOverrides): Promise<BigNumber>;
+
     getLastInvariant(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getLatest(
+      variable: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getOracleMiscData(overrides?: CallOverrides): Promise<BigNumber>;
+
     getOwner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getPastAccumulators(
+      queries: { variable: BigNumberish; ago: BigNumberish }[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getPausedState(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1206,9 +1625,25 @@ export class StablePool extends BaseContract {
 
     getRate(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getSample(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getScalingFactors(overrides?: CallOverrides): Promise<BigNumber>;
 
     getSwapFeePercentage(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getTimeWeightedAverage(
+      queries: {
+        variable: BigNumberish;
+        secs: BigNumberish;
+        ago: BigNumberish;
+      }[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTotalSamples(overrides?: CallOverrides): Promise<BigNumber>;
 
     getVault(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1251,7 +1686,7 @@ export class StablePool extends BaseContract {
     ): Promise<BigNumber>;
 
     "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256[],uint256,uint256)"(
-      swapRequest: {
+      request: {
         kind: BigNumberish;
         tokenIn: string;
         tokenOut: string;
@@ -1360,6 +1795,13 @@ export class StablePool extends BaseContract {
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    updateOracle(
+      lastChangeBlock: BigNumberish,
+      balance0: BigNumberish,
+      balance1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1390,6 +1832,16 @@ export class StablePool extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    dirtyUninitializedOracleSamples(
+      startIndex: BigNumberish,
+      endIndex: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    enableOracle(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     getActionId(
       selector: BytesLike,
       overrides?: CallOverrides
@@ -1401,9 +1853,25 @@ export class StablePool extends BaseContract {
 
     getAuthorizer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getLargestSafeQueryWindow(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getLastInvariant(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getLatest(
+      variable: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getOracleMiscData(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getPastAccumulators(
+      queries: { variable: BigNumberish; ago: BigNumberish }[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getPausedState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1411,11 +1879,27 @@ export class StablePool extends BaseContract {
 
     getRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getSample(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getScalingFactors(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getSwapFeePercentage(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getTimeWeightedAverage(
+      queries: {
+        variable: BigNumberish;
+        secs: BigNumberish;
+        ago: BigNumberish;
+      }[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTotalSamples(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1461,7 +1945,7 @@ export class StablePool extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256[],uint256,uint256)"(
-      swapRequest: {
+      request: {
         kind: BigNumberish;
         tokenIn: string;
         tokenOut: string;
@@ -1569,6 +2053,13 @@ export class StablePool extends BaseContract {
       recipient: string,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateOracle(
+      lastChangeBlock: BigNumberish,
+      balance0: BigNumberish,
+      balance1: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

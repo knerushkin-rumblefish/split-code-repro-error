@@ -11,6 +11,7 @@ import {
   PopulatedTransaction,
   BaseContract,
   ContractTransaction,
+  Overrides,
   CallOverrides,
 } from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
@@ -21,11 +22,39 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface IBasePoolInterface extends ethers.utils.Interface {
   functions: {
     "getPoolId()": FunctionFragment;
+    "onExitPool(bytes32,address,address,uint256[],uint256,uint256,bytes)": FunctionFragment;
+    "onJoinPool(bytes32,address,address,uint256[],uint256,uint256,bytes)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "getPoolId", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "onExitPool",
+    values: [
+      BytesLike,
+      string,
+      string,
+      BigNumberish[],
+      BigNumberish,
+      BigNumberish,
+      BytesLike
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "onJoinPool",
+    values: [
+      BytesLike,
+      string,
+      string,
+      BigNumberish[],
+      BigNumberish,
+      BigNumberish,
+      BytesLike
+    ]
+  ): string;
 
   decodeFunctionResult(functionFragment: "getPoolId", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "onExitPool", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "onJoinPool", data: BytesLike): Result;
 
   events: {};
 }
@@ -75,21 +104,141 @@ export class IBasePool extends BaseContract {
 
   functions: {
     getPoolId(overrides?: CallOverrides): Promise<[string]>;
+
+    onExitPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    onJoinPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   getPoolId(overrides?: CallOverrides): Promise<string>;
 
+  onExitPool(
+    poolId: BytesLike,
+    sender: string,
+    recipient: string,
+    balances: BigNumberish[],
+    lastChangeBlock: BigNumberish,
+    protocolSwapFeePercentage: BigNumberish,
+    userData: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  onJoinPool(
+    poolId: BytesLike,
+    sender: string,
+    recipient: string,
+    balances: BigNumberish[],
+    lastChangeBlock: BigNumberish,
+    protocolSwapFeePercentage: BigNumberish,
+    userData: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     getPoolId(overrides?: CallOverrides): Promise<string>;
+
+    onExitPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber[], BigNumber[]] & {
+        amountsOut: BigNumber[];
+        dueProtocolFeeAmounts: BigNumber[];
+      }
+    >;
+
+    onJoinPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber[], BigNumber[]] & {
+        amountsIn: BigNumber[];
+        dueProtocolFeeAmounts: BigNumber[];
+      }
+    >;
   };
 
   filters: {};
 
   estimateGas: {
     getPoolId(overrides?: CallOverrides): Promise<BigNumber>;
+
+    onExitPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    onJoinPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     getPoolId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    onExitPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    onJoinPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
   };
 }

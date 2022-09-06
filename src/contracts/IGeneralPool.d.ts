@@ -22,10 +22,36 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface IGeneralPoolInterface extends ethers.utils.Interface {
   functions: {
     "getPoolId()": FunctionFragment;
+    "onExitPool(bytes32,address,address,uint256[],uint256,uint256,bytes)": FunctionFragment;
+    "onJoinPool(bytes32,address,address,uint256[],uint256,uint256,bytes)": FunctionFragment;
     "onSwap((uint8,address,address,uint256,bytes32,uint256,address,address,bytes),uint256[],uint256,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "getPoolId", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "onExitPool",
+    values: [
+      BytesLike,
+      string,
+      string,
+      BigNumberish[],
+      BigNumberish,
+      BigNumberish,
+      BytesLike
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "onJoinPool",
+    values: [
+      BytesLike,
+      string,
+      string,
+      BigNumberish[],
+      BigNumberish,
+      BigNumberish,
+      BytesLike
+    ]
+  ): string;
   encodeFunctionData(
     functionFragment: "onSwap",
     values: [
@@ -47,6 +73,8 @@ interface IGeneralPoolInterface extends ethers.utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "getPoolId", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "onExitPool", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "onJoinPool", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "onSwap", data: BytesLike): Result;
 
   events: {};
@@ -98,6 +126,28 @@ export class IGeneralPool extends BaseContract {
   functions: {
     getPoolId(overrides?: CallOverrides): Promise<[string]>;
 
+    onExitPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    onJoinPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     onSwap(
       swapRequest: {
         kind: BigNumberish;
@@ -119,6 +169,28 @@ export class IGeneralPool extends BaseContract {
 
   getPoolId(overrides?: CallOverrides): Promise<string>;
 
+  onExitPool(
+    poolId: BytesLike,
+    sender: string,
+    recipient: string,
+    balances: BigNumberish[],
+    lastChangeBlock: BigNumberish,
+    protocolSwapFeePercentage: BigNumberish,
+    userData: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  onJoinPool(
+    poolId: BytesLike,
+    sender: string,
+    recipient: string,
+    balances: BigNumberish[],
+    lastChangeBlock: BigNumberish,
+    protocolSwapFeePercentage: BigNumberish,
+    userData: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   onSwap(
     swapRequest: {
       kind: BigNumberish;
@@ -139,6 +211,38 @@ export class IGeneralPool extends BaseContract {
 
   callStatic: {
     getPoolId(overrides?: CallOverrides): Promise<string>;
+
+    onExitPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber[], BigNumber[]] & {
+        amountsOut: BigNumber[];
+        dueProtocolFeeAmounts: BigNumber[];
+      }
+    >;
+
+    onJoinPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber[], BigNumber[]] & {
+        amountsIn: BigNumber[];
+        dueProtocolFeeAmounts: BigNumber[];
+      }
+    >;
 
     onSwap(
       swapRequest: {
@@ -164,6 +268,28 @@ export class IGeneralPool extends BaseContract {
   estimateGas: {
     getPoolId(overrides?: CallOverrides): Promise<BigNumber>;
 
+    onExitPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    onJoinPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     onSwap(
       swapRequest: {
         kind: BigNumberish;
@@ -185,6 +311,28 @@ export class IGeneralPool extends BaseContract {
 
   populateTransaction: {
     getPoolId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    onExitPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    onJoinPool(
+      poolId: BytesLike,
+      sender: string,
+      recipient: string,
+      balances: BigNumberish[],
+      lastChangeBlock: BigNumberish,
+      protocolSwapFeePercentage: BigNumberish,
+      userData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     onSwap(
       swapRequest: {

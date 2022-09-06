@@ -45,15 +45,15 @@ interface IBasePool is IPoolSwapStructs {
      * Contracts implementing this function should check that the caller is indeed the Vault before performing any
      * state-changing operations, such as minting pool shares.
      */
-//    function onJoinPool(
-//        bytes32 poolId,
-//        address sender,
-//        address recipient,
-//        uint256[] memory balances,
-//        uint256 lastChangeBlock,
-//        uint256 protocolSwapFeePercentage,
-//        bytes memory userData
-//    ) external returns (uint256[] memory amountsIn, uint256[] memory dueProtocolFeeAmounts);
+    function onJoinPool(
+        bytes32 poolId,
+        address sender,
+        address recipient,
+        uint256[] memory balances,
+        uint256 lastChangeBlock,
+        uint256 protocolSwapFeePercentage,
+        bytes memory userData
+    ) external returns (uint256[] memory amountsIn, uint256[] memory dueProtocolFeeAmounts);
 
     /**
      * @dev Called by the Vault when a user calls `IVault.exitPool` to remove liquidity from this Pool. Returns how many
@@ -77,15 +77,15 @@ interface IBasePool is IPoolSwapStructs {
      * Contracts implementing this function should check that the caller is indeed the Vault before performing any
      * state-changing operations, such as burning pool shares.
      */
-//    function onExitPool(
-//        bytes32 poolId,
-//        address sender,
-//        address recipient,
-//        uint256[] memory balances,
-//        uint256 lastChangeBlock,
-//        uint256 protocolSwapFeePercentage,
-//        bytes memory userData
-//    ) external returns (uint256[] memory amountsOut, uint256[] memory dueProtocolFeeAmounts);
+    function onExitPool(
+        bytes32 poolId,
+        address sender,
+        address recipient,
+        uint256[] memory balances,
+        uint256 lastChangeBlock,
+        uint256 protocolSwapFeePercentage,
+        bytes memory userData
+    ) external returns (uint256[] memory amountsOut, uint256[] memory dueProtocolFeeAmounts);
 
     function getPoolId() external view returns (bytes32);
 }

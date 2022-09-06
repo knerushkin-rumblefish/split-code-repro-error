@@ -21,3 +21,12 @@ Looks like Code Split Factory do not work for contracts larger than 24kB on Godw
 | MetaStablePoolFactory           | 3.121        |
 | MetaStablePoolLessThan24        | ***23.629*** |
 | MetaStablePoolLessThan24Factory | 3.121        |
+
+### Update
+Added `MetaStablePoolExternalLibrary` where one library is externalized to reduce contract size. Contract is deployed but can't perform single call without revert on Godwoken.  
+
+| Contract                        | Size         |
+|---------------------------------|--------------|
+| MetaStablePool                  | ***25.409*** |
+| MetaStablePoolLessThan24        | ***23.629*** |
+| MetaStablePoolExternalLibrary   | ***23.807*** |

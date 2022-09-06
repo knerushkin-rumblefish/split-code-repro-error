@@ -34,13 +34,22 @@ const harhatConfig: HardhatUserConfig = {
       },
     ],
     overrides: {
-      'contracts/pool-stable/meta/MetaStablePool.sol': {
+      'contracts/StablePool/meta/MetaStablePool.sol': {
         version: '0.7.1',
         settings: {
           optimizer: {
             enabled: true,
-            runs: 200,
+            runs: 10,
           }
+        },
+      },
+      'contracts/StablePool/meta/MetaStablePoolExternalLibrary.sol': {
+        version: '0.7.1',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 100,
+          },
         },
       },
       'contracts/pool-stable/meta/MetaStablePoolFactory.sol': {

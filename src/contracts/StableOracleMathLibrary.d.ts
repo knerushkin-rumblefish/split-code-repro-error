@@ -20,10 +20,15 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface StableOracleMathLibraryInterface extends ethers.utils.Interface {
   functions: {
+    "calcLogBptPrice(uint256,uint256,uint256,int256)": FunctionFragment;
     "calcLogPrices(uint256,uint256,uint256,int256)": FunctionFragment;
     "calcSpotPrice(uint256,uint256,uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "calcLogBptPrice",
+    values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "calcLogPrices",
     values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish]
@@ -33,6 +38,10 @@ interface StableOracleMathLibraryInterface extends ethers.utils.Interface {
     values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "calcLogBptPrice",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "calcLogPrices",
     data: BytesLike
@@ -89,6 +98,14 @@ export class StableOracleMathLibrary extends BaseContract {
   interface: StableOracleMathLibraryInterface;
 
   functions: {
+    calcLogBptPrice(
+      spotPrice: BigNumberish,
+      balanceX: BigNumberish,
+      balanceY: BigNumberish,
+      logBptTotalSupply: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     calcLogPrices(
       amplificationParameter: BigNumberish,
       balanceX: BigNumberish,
@@ -110,6 +127,14 @@ export class StableOracleMathLibrary extends BaseContract {
     ): Promise<[BigNumber]>;
   };
 
+  calcLogBptPrice(
+    spotPrice: BigNumberish,
+    balanceX: BigNumberish,
+    balanceY: BigNumberish,
+    logBptTotalSupply: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   calcLogPrices(
     amplificationParameter: BigNumberish,
     balanceX: BigNumberish,
@@ -128,6 +153,14 @@ export class StableOracleMathLibrary extends BaseContract {
   ): Promise<BigNumber>;
 
   callStatic: {
+    calcLogBptPrice(
+      spotPrice: BigNumberish,
+      balanceX: BigNumberish,
+      balanceY: BigNumberish,
+      logBptTotalSupply: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     calcLogPrices(
       amplificationParameter: BigNumberish,
       balanceX: BigNumberish,
@@ -152,6 +185,14 @@ export class StableOracleMathLibrary extends BaseContract {
   filters: {};
 
   estimateGas: {
+    calcLogBptPrice(
+      spotPrice: BigNumberish,
+      balanceX: BigNumberish,
+      balanceY: BigNumberish,
+      logBptTotalSupply: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     calcLogPrices(
       amplificationParameter: BigNumberish,
       balanceX: BigNumberish,
@@ -169,6 +210,14 @@ export class StableOracleMathLibrary extends BaseContract {
   };
 
   populateTransaction: {
+    calcLogBptPrice(
+      spotPrice: BigNumberish,
+      balanceX: BigNumberish,
+      balanceY: BigNumberish,
+      logBptTotalSupply: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     calcLogPrices(
       amplificationParameter: BigNumberish,
       balanceX: BigNumberish,

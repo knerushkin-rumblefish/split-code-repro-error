@@ -19,19 +19,16 @@ const harhatConfig: HardhatUserConfig = {
     runOnCompile: true,
     alphaSort: true,
     disambiguatePaths: false,
-    // strict: true,
+    strict: true,
   },
   solidity: {
     compilers: [
       {
         version: '0.7.1',
         settings: {
-          optimizer: { enabled: true, runs: 9999 },
+          optimizer: { enabled: true, runs: 1 },
         },
-      },
-      {
-        version: '0.8.2',
-      },
+      }
     ],
     overrides: {
       'contracts/StablePool/meta/MetaStablePool.sol': {
@@ -39,7 +36,7 @@ const harhatConfig: HardhatUserConfig = {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 10,
+            runs: 1,
           }
         },
       },
@@ -48,7 +45,7 @@ const harhatConfig: HardhatUserConfig = {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 100,
+            runs: 1,
           },
         },
       },
@@ -56,7 +53,7 @@ const harhatConfig: HardhatUserConfig = {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 200,
+            runs: 1,
           }
         },
         version: '0.7.1',
@@ -82,7 +79,7 @@ const harhatConfig: HardhatUserConfig = {
     hardhat: {
       live: true,
       saveDeployments: true,
-      allowUnlimitedContractSize: true,
+      allowUnlimitedContractSize: false,
 
       tags: ['hardhat'],
       gas: 12000000,

@@ -19,8 +19,6 @@ import "../LogCompression.sol";
 
 import "./StableMath.sol";
 
-import "hardhat/console.sol";
-
 library StableOracleMathLibrary {
     using FixedPoint for uint256;
 
@@ -34,7 +32,6 @@ library StableOracleMathLibrary {
         int256 logBptTotalSupply
     ) external view returns (int256 logSpotPrice, int256 logBptPrice) {
 
-        console.log("logBptTotalSupply %s , amplificationParameter", balanceX);
 
         uint256 spotPrice = _calcSpotPrice(amplificationParameter, balanceX, balanceY);
         logBptPrice = _calcLogBptPrice(spotPrice, balanceX, balanceY, logBptTotalSupply);
@@ -62,17 +59,12 @@ library StableOracleMathLibrary {
         // S = sum of balances but x,y = 0 since x  and y are the only tokens                                        //
         **************************************************************************************************************/
 
-        console.log("StableOracleMath");
         uint256 invariant = StableMath._calculateInvariant(amplificationParameter, _balances(balanceX, balanceY), true);
 
-        console.log("StableOracleMath amplificationParameter %s", amplificationParameter);
         uint256 a = (amplificationParameter * 2) / StableMath._AMP_PRECISION;
-        console.log("StableOracleMath a %s", a);
         uint256 b = Math.mul(invariant, a).sub(invariant);
-        console.log("StableOracleMath b %s", b);
 
         uint256 axy2 = Math.mul(a * 2, balanceX).mulDown(balanceY); // n = 2
-        console.log("StableOracleMath axy2 %s", axy2);
 
         // dx = a.x.y.2 + a.y^2 - b.y
         uint256 derivativeX = axy2.add(Math.mul(a, balanceY).mulDown(balanceY)).sub(b.mulDown(balanceY));
